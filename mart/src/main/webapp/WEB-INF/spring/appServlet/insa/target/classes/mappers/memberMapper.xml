@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="insa.memberMapper">
+
+<!-- code등록 -->
+<insert id="regCode"> 
+	insert into code (code1, code2, codename)
+	values (code_seq.nextval, #{code2},  #{codename})
+</insert>
+
+<select id="codeList" resultType="com.prj.vo.CatVo">
+	select level, codename,  code1, code2
+	from code
+	start with (code2 is null  or code2=0) connect by prior code1 = code2
+</select>
+
+
+
+
+<!-- 사원등록 -->
+<insert id="write">
+	 <selectKey keyProperty="id" resultType="int" order="BEFORE">
+        SELECT company_member_seq.nextval from dual
+    </selectKey>
+    
+	insert into company_member (id, name, age, gender, part, hobby)
+	values (#{id}, #{name}, #{age}, #{gender}, #{part}, #{hobby} )
+</insert>
+
+<update id="modify">
+	update company_member set name = #{name}, age = #{age}, 
+	gender = #{gender}, part = #{part}, hobby = #{hobby}
+	where id = #{id}
+</update>
+
+<select id="detail" resultType="com.prj.vo.MemberVo">
+	select id, name, age, gender, 
+	part, hobby from company_member
+	where id = #{id}
+</select>
+
+<select id="fileDetail" resultType="com.prj.vo.FileSaveVo">
+	SELECT id, originalfilename, filepath, filetype
+	FROM savefile
+	where boardid = #{id}
+</select>
+
+<select id="downFile" resultType="com.prj.vo.FileSaveVo">
+	SELECT id, savedfilename, filepath, filetype
+	FROM savefile
+	where id = #{id}
+</select>
+
+<select id="delete" resultType="com.prj.vo.MemberVo">
+	delete from company_member
+	where id = #{id}
+</select>
+
+
+
+
+<sql id="searchWhere">
+ <if test='searchType.equals("n")'>
+  WHERE name LIKE '%'||#{searchWord}||'%' 
+ </if>
+ 
+ <if test='searchType.equals("a")'>
+  WHERE gender LIKE '%'||#{searchWord}||'%' 
+ </if>
+ 
+ <if test='searchType.equals("nh")'>
+  WHERE name LIKE '%'||#{searchWord}||'%'  
+   or hobby LIKE '%'||#{searchWord}||'%' 
+ </if>
+ 
+ <if test='searchType.equals("h")'>
+  WHERE hobby LIKE '%'||#{searchWord}||'%' 
+ </if>
+</sql>
+
+<select id="listPage" resultType="com.prj.vo.MemberVo" parameterType="com.prj.util.Pagination">
+    select id, name, age, gender, part, hobby
+       from (
+           select id, name, age, gender, part, hobby,
+               row_number() over(order by id desc) as rNum
+           from company_member
+            <if test="searchWord != null and searchWord != '' ">
+                <include refid="searchWhere"></include>
+            </if>           
+     ) mb
+    where rNum between #{startIndex} and #{endIndex}
+        order by id desc
+</select>
+
+<select id="listCount" resultType="int" parameterType="com.prj.util.Pagination">
+<![CDATA[
+	select count(id) from company_member
+]]>
+            <if test="searchWord != null and searchWord != '' ">
+                <include refid="searchWhere"></include>
+            </if> 
+</select>
+
+<!-- 파일등록 -->
+<insert id="insertFile">
+	insert into savefile (id, boardName, boardId, originalFileName, savedFileName, filePath, fileType, fileSize)
+	values (savefile_seq.nextval, #{boardName}, #{boardId}, #{originalFileName}
+	, #{savedFileName}, #{filePath}, #{fileType}, #{fileSize} )
+</insert>
+
+<select id="delFile" parameterType="java.util.Map">
+	delete from company_member
+	where id in 
+    <foreach item="item" index="index" collection="id" open="(" close=")" separator=",">
+            #{item}
+    </foreach>
+</select>
+
+ <select id="selectByEmail" resultType="com.prj.vo.UserVo">
+       SELECT
+           EMAIL,
+           NAME
+       FROM
+           usertbl
+       WHERE
+           EMAIL = #{email}       
+ </select>
+ 
+ <select id="selectById" resultType="com.prj.vo.UserVo">
+       SELECT
+           ID,
+           NAME
+       FROM
+           usertbl
+       WHERE
+           ID = #{id}       
+ </select>
+ 
+ <insert id="register">
+         INSERT INTO usertbl
+         (
+             IDX,
+             EMAIL,
+             ID,
+             NAME,
+             PASSWORD,
+             REGDATE
+         )
+         VALUES
+         (
+             seq_usertbl_idx.nextval,
+             #{email},
+             #{id},
+             #{name},
+             #{pw},
+             SYSDATE
+         )
+ </insert>
+
+
+</mapper>

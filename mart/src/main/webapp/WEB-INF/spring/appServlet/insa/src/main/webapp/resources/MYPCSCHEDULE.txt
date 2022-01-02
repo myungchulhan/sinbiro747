@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-16" ?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+    <RegistrationInfo>
+        <Description>안랩_내PC지키미</Description>
+    </RegistrationInfo>
+    <Triggers>
+        <LogonTrigger>
+            <Enabled>true</Enabled>
+            <Delay>PT1M</Delay>
+        </LogonTrigger>
+        <CalendarTrigger>
+            <StartBoundary>2013-07-05T09:05:00</StartBoundary>
+            <Enabled>true</Enabled>
+            <ScheduleByDay>
+                <DaysInterval>1</DaysInterval>
+            </ScheduleByDay>
+        </CalendarTrigger>
+    </Triggers>
+    <Principals>
+        <Principal id="Author">
+            <RunLevel>HighestAvailable</RunLevel>
+            <LogonType>InteractiveToken</LogonType>
+        </Principal>
+    </Principals>
+    <Settings>
+        <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+        <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+        <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+        <AllowHardTerminate>false</AllowHardTerminate>
+        <StartWhenAvailable>false</StartWhenAvailable>
+        <RunOnlyIfNetworkAvailable>true</RunOnlyIfNetworkAvailable>
+        <IdleSettings>
+            <StopOnIdleEnd>false</StopOnIdleEnd>
+            <RestartOnIdle>false</RestartOnIdle>
+        </IdleSettings>
+        <AllowStartOnDemand>true</AllowStartOnDemand>
+        <Enabled>true</Enabled>
+        <Hidden>false</Hidden>
+        <RunOnlyIfIdle>false</RunOnlyIfIdle>
+        <WakeToRun>false</WakeToRun>
+        <ExecutionTimeLimit>PT0S</ExecutionTimeLimit>
+        <Priority>7</Priority>
+    </Settings>
+    <Actions Context="Author">
+        <Exec>
+            <Command>&quot;C:\Program Files (x86)\AhnLab\APC2\MyPCInspector\MyPcUI.exe&quot;</Command>
+            <Arguments>-cmd:startup</Arguments>
+        </Exec>
+    </Actions>
+</Task>

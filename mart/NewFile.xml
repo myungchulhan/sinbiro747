@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  <mapper namespace =  "com.mart.member">
+  <select id="memberList"  resultType="MemberVo">
+  <![CDATA[
+  select * from member where age<100 ]]>
+  </select>
+  
+  <insert id="write">
+  insert into (id, age, hobby) values (#{id}, #{age}, #{hobby})
+  </insert>
+  
+  <update id="meberUpdate" parameterType="int">
+  	update meber  set age = #{age}, hobby = #{hobby} where id = #{id}
+  </update>
+ 
+  
+  <delete id="memberDelete" parameterType="int">
+  	delete from member where id= #{id}
+  </delete>
+  
+  
+  
+   </mapper>
